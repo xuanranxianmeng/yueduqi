@@ -1380,6 +1380,8 @@
   var ttsAutoNext = true;       // 播完是否自动进下一章
 
   function initTtsVoices() {
+    // 兼容：部分浏览器（微信/手机 WebView）不支持 speechSynthesis
+    if (typeof speechSynthesis === 'undefined') return;
     var sel = $('ttsVoice');
     if (!sel) return;
     sel.innerHTML = '';
@@ -1510,7 +1512,7 @@
     ttsPaused = false;
     ttsParas = getTtsText();
     ttsParaIdx = 0;
-    initTtsVoices();
+    if (typeof speechSynthesis !== 'undefined') initTtsVoices();
     updateTtsUi();
     speakPara(0);
   }
