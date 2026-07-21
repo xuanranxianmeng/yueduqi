@@ -1,0 +1,97 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>青简阅读 · 真实数据演示（若初文学）</title><style>:root {
+  --bg: #1f2430;
+  --fg: #d8dde8;
+  --muted: #8b93a7;
+  --accent: #6ea8fe;
+  --card: #2a3040;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg); color: var(--fg);
+  min-height: 100vh;
+}
+.hidden { display: none !important; }
+.topbar {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; background: var(--card); border-bottom: 1px solid #00000033;
+}
+.topbar .title { font-weight: 600; font-size: 17px; }
+.icon-btn { background: none; border: none; color: var(--accent); font-size: 15px; cursor: pointer; padding: 6px; }
+.view { padding: 16px; max-width: 760px; margin: 0 auto; }
+.search-box { display: flex; gap: 8px; margin-bottom: 12px; }
+.search-box input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #ffffff22; background: var(--card); color: var(--fg); font-size: 16px; }
+.search-box button { padding: 0 18px; border: none; border-radius: 10px; background: var(--accent); color: #08111f; font-weight: 600; cursor: pointer; }
+.source-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 8px; }
+.chip { flex: 0 0 auto; padding: 6px 12px; border-radius: 999px; background: var(--card); color: var(--muted); font-size: 13px; border: 1px solid #ffffff11; cursor: pointer; white-space: nowrap; }
+.chip.active { background: var(--accent); color: #08111f; font-weight: 600; }
+h3 { margin: 16px 0 10px; font-size: 15px; color: var(--muted); }
+.book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; }
+.book-card { cursor: pointer; }
+.book-card img, .book-card .cover { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 8px; background: #00000033; }
+.book-card .cover.placeholder { background: linear-gradient(135deg, #2a3040, #3a4050); }
+.book-card .name, .book-card .book-title { font-size: 13px; margin-top: 6px; line-height: 1.3; max-height: 2.6em; overflow: hidden; }
+.book-card .author { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.cover { width: 96px; aspect-ratio: 3/4; object-fit: cover; border-radius: 8px; background: #00000033; }
+.book-head { display: flex; gap: 14px; }
+.book-meta { flex: 1; }
+.book-meta h2 { margin: 0 0 6px; font-size: 19px; }
+.muted { color: var(--muted); }
+.small { font-size: 12px; }
+.tag { display: inline-block; background: #6ea8fe22; color: var(--accent); padding: 2px 8px; border-radius: 6px; font-size: 12px; margin: 4px 0; }
+.intro { font-size: 14px; line-height: 1.7; color: #c2c9d6; max-height: 8em; overflow: hidden; }
+.primary-btn { margin-top: 10px; padding: 8px 16px; border: none; border-radius: 8px; background: var(--accent); color: #08111f; font-weight: 600; cursor: pointer; }
+.toc-list { max-height: 60vh; overflow-y: auto; }
+.toc-item { padding: 11px 8px; border-bottom: 1px solid #ffffff0d; font-size: 14px; cursor: pointer; }
+.toc-item:hover { color: var(--accent); }
+.reader-content { font-size: 18px; line-height: 1.8; padding-bottom: 80px; white-space: pre-wrap; word-break: break-word; }
+.reader-bar { position: fixed; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 16px; background: var(--card); border-top: 1px solid #00000033; }
+.reader-bar button { flex: 0 0 auto; padding: 8px 14px; border: none; border-radius: 8px; background: var(--accent); color: #08111f; font-weight: 600; cursor: pointer; }
+.chap-title { flex: 1; text-align: center; font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fab { position: fixed; right: 16px; bottom: 70px; width: 46px; height: 46px; border-radius: 50%; border: none; background: var(--accent); color: #08111f; font-weight: 700; font-size: 16px; cursor: pointer; z-index: 12; }
+.settings-panel { position: fixed; right: 16px; bottom: 124px; background: var(--card); padding: 14px; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; z-index: 12; box-shadow: 0 8px 30px #0008; }
+.settings-panel label { font-size: 13px; display: flex; flex-direction: column; gap: 4px; }
+.theme-row { display: flex; gap: 10px; }
+.theme-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #ffffff33; cursor: pointer; }
+.loading { text-align: center; color: var(--muted); padding: 30px; }
+.shelf-wrap { margin-bottom: 8px; }
+</style></head>
+<body>
+<header class="topbar"><div class="title">青简阅读 · 真实演示</div></header>
+<section class="view">
+  <div class="book-head">
+    <img class="cover" src="https://b-new.heiyanimg.com/book/148435.jpg@!bcm?2" onerror="this.style.display='none'"/>
+    <div class="book-meta">
+      <h2>肆意漫漫</h2>
+      <div class="muted">琥珀 · 来源：若初文学</div>
+      <div class="tag">现言</div>
+      <div class="muted small">字数：52998字</div>
+      <button class="primary-btn" onclick="showToc()">查看目录（30章）</button>
+    </div>
+  </div>
+  <p class="intro">姜温漫觉得自己配不上许斯易，所以没有那种奢望。
+可许斯易不断靠近她，还暗示着她什么。
+姜温漫懂了，而且也心动了，不再想什么配上配不上的事情了，她追上不就行了。
+
+天之骄子深情种 vs 忧郁娇弱软美人</p>
+  <div id="tocWrap" class="hidden"><h3>目录</h3><div class="toc-list" id="tocList"></div></div>
+  <div id="chapWrap" class="hidden">
+    <h3 id="chapName"></h3>
+    <div class="reader-content" id="chapContent"></div>
+  </div>
+</section>
+<script>
+const DATA = {"source":"若初文学","book":{"name":"肆意漫漫","author":"琥珀","bookUrl":"https://www.ruochu.com/book/148435","coverUrl":"https://b-new.heiyanimg.com/book/148435.jpg@!bcm?2","intro":"姜温漫觉得自己配不上许斯易，所以没有那种奢望。\n可许斯易不断靠近她，还暗示着她什么。\n姜温漫懂了，而且也心动了，不再想什么配上配不上的事情了，她追上不就行了。\n\n天之骄子深情种 vs 忧郁娇弱软美人","kind":"现言","lastChapter":"第34章 大度的女朋友","wordCount":"52998字","tocUrl":"http://www.ruochu.com/chapter/148435"},"toc":[{"name":"第1章 那不是姜温漫嘛","url":"http://www.ruochu.com/book/148435/12629148"},{"name":"第3章 你是我的助理","url":"http://www.ruochu.com/book/148435/12629159"},{"name":"第4章 不受人待见","url":"http://www.ruochu.com/book/148435/12629520"},{"name":"第5章 我也没有女朋友","url":"http://www.ruochu.com/book/148435/12630657"},{"name":"第6章 我讨厌你","url":"http://www.ruochu.com/book/148435/12631053"},{"name":"第7章 大丈夫能屈能伸","url":"http://www.ruochu.com/book/148435/12633543"},{"name":"第8章 他的话都是圈套","url":"http://www.ruochu.com/book/148435/12634486"},{"name":"第9章 喝酒了","url":"http://www.ruochu.com/book/148435/12636377"},{"name":"第10章 他开始撩了","url":"http://www.ruochu.com/book/148435/12640010"},{"name":"第11章 渣女","url":"http://www.ruochu.com/book/148435/12646421"},{"name":"第12章 许公主","url":"http://www.ruochu.com/book/148435/12649218"},{"name":"第13章 办公室恋情","url":"http://www.ruochu.com/book/148435/12653178"},{"name":"第14章 霸总护妻","url":"http://www.ruochu.com/book/148435/12656136"},{"name":"第15章 领他到家","url":"http://www.ruochu.com/book/148435/12658012"},{"name":"第16章 她的选择是他","url":"http://www.ruochu.com/book/148435/12660693"},{"name":"第18章 那你多抱我一会儿","url":"http://www.ruochu.com/book/148435/12664687"},{"name":"第19章 好像是在哄女儿睡觉","url":"http://www.ruochu.com/book/148435/12666877"},{"name":"第20章 给他系围巾","url":"http://www.ruochu.com/book/148435/12669175"},{"name":"第21章 算是同居吗","url":"http://www.ruochu.com/book/148435/12670836"},{"name":"第22章 金屋藏娇","url":"http://www.ruochu.com/book/148435/12672382"},{"name":"第23章 小脾气","url":"http://www.ruochu.com/book/148435/12674910"},{"name":"第24章 毛毯吻","url":"http://www.ruochu.com/book/148435/12685589"},{"name":"第25章 上瘾","url":"http://www.ruochu.com/book/148435/12688874"},{"name":"第26章 毫无顾虑地依靠他","url":"http://www.ruochu.com/book/148435/12691943"},{"name":"第27章 生病","url":"http://www.ruochu.com/book/148435/12693506"},{"name":"第28章 她的父母","url":"http://www.ruochu.com/book/148435/12695386"},{"name":"第29章 美人在怀","url":"http://www.ruochu.com/book/148435/12701749"},{"name":"第30章 备注","url":"http://www.ruochu.com/book/148435/12703209"},{"name":"第31章 我喜欢的人也一直是你","url":"http://www.ruochu.com/book/148435/12704809"},{"name":"第32章 吃醋了","url":"http://www.ruochu.com/book/148435/12706551"}],"chapter":{"name":"第1章 那不是姜温漫嘛","content":"\u003cp>一进办公室门，姜温漫就愣住了，新来的许经理怎么会是他。\u003c/p>\u003cp>而她面前的男人波澜不惊，平静地坐着，好像早已预知这一切。\u003c/p>\u003cp>姜温漫微微握紧手指，看男人一脸淡定的模样，猜想他是不是早已经知道公司为他安排的助理会是她。\u003c/p>\u003cp>想起以前的过往，姜温漫还挺佩服他能那么安然自若。\u003c/p>\u003cp>她抿了抿唇，也让自己镇定下来，平和开口：“您好，许经理。”\u003c/p>\u003cp>男人听到她这恭敬又疏远的态度，淡淡一笑：“怎么一见面就那么生分。”\u003c/p>\u003cp>男人语气轻缓，似乎只是一场多年未见的朋友重逢。\u003c/p>\u003cp>算一算，他们已经有四年没见了。\u003c/p>\u003cp>可姜温漫做不到像他那样放松，但想到他也是理智的人，不会把其他事牵扯到工作上。\u003c/p>\u003cp>她也直白，说：“现在是工作时间，如果许经理和我有什么私人恩怨可以私下说。”\u003c/p>\u003cp>听她这么说，许斯易忍不住轻笑一声，这么说来是他工作不认真了。\u003c/p>\u003cp>好，那就工作。\u003c/p>\u003cp>他的目光从她身上移开，随手在办公桌上拿起一打文件，抬手让她接住。\u003c/p>\u003cp>“把这些文件都整理好。”\u003c/p>\u003cp>姜温漫接过来，顺从回答：“好的。”\u003c/p>\u003cp>她刚转身准备出去，却被男人喊住：“去哪？”\u003c/p>\u003cp>她转头看他：“我出去工……”\u003c/p>\u003cp>她话还没说完，许斯易指了指他对面的那张办公桌，上面有台电脑：“你去那工作。”\u003c/p>\u003cp>隔壁不是有专门提供给助理工作的地方吗？\u003c/p>\u003cp>姜温漫不解地看他，他倒是一副气定神闲的模样，她现在明确怀疑他就是来给她找不痛快的。\u003c/p>\u003cp>但她又能怎样，他现在是她的上司，她只能顺从。\u003c/p>\u003cp>姜温漫认命般地坐在那，他既然无所谓，那她还在意什么。\u003c/p>\u003cp>她摒除杂念，认真投入工作中，用了两个小时快速整理完所有文件。\u003c/p>\u003cp>她把文件交还给男人：“许经理，这些我都做好了，您还有其他事吗？”\u003c/p>\u003cp>许斯易没想到她做的那么快，这些文件碎也杂，怎么也要忙上大半天。他简单地看了一下，没说什么，也没再给她吩咐其他工作。\u003c/p>\u003cp>姜温漫因此得到暂时休息，出了许斯易的办公室，回到她原来的工作位置。\u003c/p>\u003cp>张雅工作开小差的时候没看到姜温漫，后来问了其他人才知道姜温漫换了职位，成了新来许经理的助理。\u003c/p>\u003cp>她还没见过新来的许经理，见姜温漫过来了，忍不住跑过去询问：“小漫，新来的许经理人怎么样，严肃不严肃？”\u003c/p>\u003cp>她和姜温漫是扉函集团同一批实习生，又都很幸运地通过了实习期，然后正式转正，所以两人关系很好。\u003c/p>\u003cp>她觉得姜温漫长得漂亮脾气又好，就是人有一点慢热，不喜欢热闹。\u003c/p>\u003cp>姜温漫现在有一点郁闷，因为她不知道许斯易想干什么，她本以为许斯易想给她找不痛快，可他好像并没有，除了要求她和他在同一间办公室工作，其他的好像也没什么。\u003c/p>\u003cp>她抬"}};
+function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function showToc(){document.getElementById('tocWrap').classList.remove('hidden');
+  const ul=document.getElementById('tocList'); ul.innerHTML='';
+  DATA.toc.forEach((c,i)=>{const d=document.createElement('div');d.className='toc-item';
+    d.textContent=(i+1)+'. '+c.name; if(i===0)d.onclick=()=>showChap(); ul.appendChild(d);});}
+function showChap(){const w=document.getElementById('chapWrap');w.classList.remove('hidden');
+  document.getElementById('chapName').textContent=DATA.chapter.name;
+  document.getElementById('chapContent').textContent=DATA.chapter.content;}
+</script></body></html>

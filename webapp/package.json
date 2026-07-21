@@ -1,0 +1,13 @@
+{
+  "name": "qingjian-reader",
+  "version": "1.0.0",
+  "private": true,
+  "description": "青简阅读 — 外部书源搜索 + 阅读前端（原生 JS，Vercel 部署）",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

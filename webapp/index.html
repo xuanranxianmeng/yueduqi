@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>青简 · 小说阅读</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- 顶部栏 -->
+  <header class="topbar">
+    <button id="backBtn" class="icon-btn hidden">‹ 返回</button>
+    <div class="brand">
+      <span class="brand-mark">青</span>
+      <span class="title" id="topTitle">青简阅读</span>
+    </div>
+    <span class="top-spacer"></span>
+  </header>
+
+  <!-- 首页：搜索 + 书源 -->
+  <section id="homeView" class="view">
+    <div class="search-box">
+      <span class="search-ico">🔍</span>
+      <input id="searchInput" type="search" placeholder="搜书名 / 作者，如：凡人修仙传" />
+      <button id="searchBtn">搜索</button>
+    </div>
+    <div class="source-bar" id="sourceBar"></div>
+    <div id="healthBar" class="health-bar">
+      <span class="hb-text">可用源检测中…</span>
+      <button id="reprobeBtn" class="hb-btn">重新检测</button>
+      <button id="exportHealthBtn" class="hb-btn">导出清单</button>
+    </div>
+    <h3 id="resultTitle" class="hidden">搜索结果</h3>
+    <div id="resultList" class="book-grid"></div>
+    <div id="loading" class="loading hidden">加载中…</div>
+  </section>
+
+  <!-- 书架 -->
+  <section id="shelfView" class="view hidden">
+    <h3 class="section-title">我的书架</h3>
+    <div class="shelf-tools">
+      <div class="shelf-view-toggle">
+        <button id="shelfGridBtn" class="active" data-mode="grid" type="button">▦ 网格</button>
+        <button id="shelfListBtn" data-mode="list" type="button">▤ 列表</button>
+      </div>
+      <label class="shelf-sort-wrap">排序
+        <select id="shelfSort">
+          <option value="recent">最近阅读</option>
+          <option value="added">加入时间</option>
+          <option value="name">书名</option>
+        </select>
+      </label>
+    </div>
+    <div id="shelfResume"></div>
+    <div id="shelfGrid" class="shelf-grid"></div>
+    <p id="shelfEmpty" class="empty-hint">书架还是空的，去搜一本书加入吧～</p>
+  </section>
+
+  <!-- 我的 -->
+  <section id="mineView" class="view hidden">
+    <h3 class="section-title">我的</h3>
+    <div class="mine-card">
+      <div class="mine-row"><span>已加入书架</span><b id="mineShelfCount">0</b></div>
+      <div class="mine-row"><span>可用书源</span><b id="mineSourceCount">0</b></div>
+      <div class="mine-row"><span>阅读主题</span><span class="muted small">纸白 / 护眼绿 / 深色</span></div>
+      <button id="resetSettingsBtn" class="ghost-btn">重置阅读设置</button>
+      <p class="mine-foot">青简阅读 · 调用公开书源规则，仅供学习研究</p>
+    </div>
+  </section>
+
+  <!-- 详情：书籍信息 + 目录 -->
+  <section id="detailView" class="view hidden">
+    <div class="book-head">
+      <div id="dCoverWrap" class="cover-wrap"></div>
+      <div class="book-meta">
+        <h2 id="dName"></h2>
+        <p id="dAuthor" class="muted"></p>
+        <p id="dKind" class="tag"></p>
+        <p id="dLast" class="muted small"></p>
+        <button id="addShelfBtn" class="primary-btn">加入书架</button>
+      </div>
+    </div>
+    <p id="dIntro" class="intro"></p>
+    <p class="section-sub" id="srcHead">选择书源（点不可看的源可换其他）</p>
+    <div id="sourceSelect" class="source-select"></div>
+    <div class="toc-head">
+      <h3 class="section-title">目录</h3>
+      <div class="toc-head-tools">
+        <span id="tocCount" class="toc-count"></span>
+        <button id="tocReverse" class="toc-reverse" type="button">↓ 倒序</button>
+      </div>
+    </div>
+    <div id="tocList" class="toc-list"></div>
+  </section>
+
+  <!-- 阅读器 -->
+  <section id="readerView" class="view hidden">
+    <article id="readerContent" class="reader-content"></article>
+    <!-- 听书悬浮控制条（TTS 播放时显示在内容区底部） -->
+    <div id="ttsBar" class="tts-bar hidden">
+      <button id="ttsPlayPause" class="tts-btn" title="播放/暂停">▶</button>
+      <button id="ttsStop" class="tts-btn" title="停止">■</button>
+      <span id="ttsInfo" class="tts-info"></span>
+      <select id="ttsVoice" class="tts-select" title="选择语音"></select>
+      <select id="ttsSpeed" class="tts-select" title="语速">
+        <option value="0.5">0.5x</option>
+        <option value="0.75">0.75x</option>
+        <option value="1" selected>1x</option>
+        <option value="1.25">1.25x</option>
+        <option value="1.5">1.5x</option>
+        <option value="2">2x</option>
+      </select>
+      <button id="ttsPrev" class="tts-btn-sm" title="上一段">◀</button>
+      <button id="ttsNext" class="tts-btn-sm" title="下一段">▶</button>
+    </div>
+
+    <!-- 桌面端点击翻页箭头提示（移到屏幕左右边缘时浮现，点击即翻章） -->
+    <div id="navPrev" class="reader-nav-arrow left" aria-hidden="true">‹</div>
+    <div id="navNext" class="reader-nav-arrow right" aria-hidden="true">›</div>
+
+    <!-- 底部细进度条（章节位置） -->
+    <div id="readerMini" class="reader-mini"><span></span></div>
+    <!-- 底部页码（翻页模式显示"第 X / Y 页"，滚动模式显示章节进度） -->
+    <div id="readerPageNum" class="reader-pagenum"></div>
+    <!-- 首次进入阅读器的一次性引导 -->
+    <div id="readerHint" class="reader-hint"></div>
+
+    <!-- 顶栏（点击正文中间唤出） -->
+    <div id="readerTop" class="reader-top r-hidden">
+      <button id="rBack" class="icon-btn">‹ 返回</button>
+      <div class="r-title-wrap">
+        <span id="rTitle" class="r-title"></span>
+        <span id="rChap" class="r-chap"></span>
+      </div>
+    </div>
+
+    <!-- 底栏（点击正文中间唤出）：三行工具条，高频操作全在表面 -->
+    <div id="readerBottom" class="reader-bottom r-hidden">
+      <!-- 第 0 行：上一章 / 下一章（整章跳） -->
+      <div class="r-bar-row r-bar-chap">
+        <button id="rPrevChap" class="r-chap-btn">‹ 上一章</button>
+        <span id="rChapNav" class="r-chap-nav"></span>
+        <button id="rNextChap" class="r-chap-btn">下一章 ›</button>
+      </div>
+      <!-- 第一行：目录 / 书签 / 夜间 / 听书 / Aa / 换源 -->
+      <div class="r-bar-row">
+        <button id="rToc" class="r-tool" data-on="false"><span class="r-tool-ico">≡</span><span class="r-tool-tx">目录</span></button>
+        <button id="rBm" class="r-tool" data-on="false"><span class="r-tool-ico">★</span><span class="r-tool-tx">书签</span></button>
+        <button id="rNight" class="r-tool" data-on="false"><span class="r-tool-ico">☾</span><span class="r-tool-tx">夜间</span></button>
+        <button id="rTts" class="r-tool r-tool-accent" data-on="false"><span class="r-tool-ico">♫</span><span class="r-tool-tx">听书</span></button>
+        <button id="rAa" class="r-tool r-tool-accent"><span class="r-tool-ico">Aa</span><span class="r-tool-tx">设置</span></button>
+        <button id="rSwitch" class="r-tool r-tool-sm"><span class="r-tool-tx">换源</span></button>
+        <!-- 兼容旧代码进度绑定（miniBar 已替代文字进度） -->
+        <span id="rProg" style="display:none"></span>
+      </div>
+      <!-- 第二行：亮度直接可见 -->
+      <div class="r-bar-row r-bar-bright">
+        <span class="r-bright-ico">☀</span>
+        <input id="brightness" type="range" min="20" max="100" step="1" value="100" />
+        <span id="brightVal" class="r-bright-val">100%</span>
+      </div>
+    </div>
+
+    <!-- 目录抽屉 -->
+    <div id="tocMask" class="mask"></div>
+    <div id="tocDrawer" class="toc-drawer">
+      <div class="drawer-head"><span>目录</span><button id="tocClose" class="drawer-close">✕</button></div>
+      <div class="toc-tools">
+        <input id="tocSearch" class="toc-search" type="search" placeholder="搜索章节名…" />
+        <button id="tocBmFilter" class="toc-bm-filter" type="button">★ 书签</button>
+      </div>
+      <div id="tocDrawerList" class="drawer-list"></div>
+    </div>
+
+    <!-- 换源抽屉（阅读器内，不跳转详情页） -->
+    <div id="srcMask" class="mask"></div>
+    <div id="srcDrawer" class="src-drawer">
+      <div class="drawer-head"><span>切换书源</span><button id="srcClose" class="drawer-close">✕</button></div>
+      <div id="srcDrawerList" class="drawer-list"></div>
+    </div>
+
+    <!-- 亮度遮罩（独立调暗，不影响系统亮度；opacity 由 JS 控制） -->
+    <div id="readerBrightMask"></div>
+
+    <!-- 设置面板（底部弹出 sheet，点工具条 Aa 唤出） -->
+    <div id="readerSettings" class="r-sheet">
+      <div class="r-sheet-head">
+        <span>阅读设置</span>
+        <span class="r-sheet-tip">改动即时生效</span>
+      </div>
+
+      <div class="r-row">
+        <span class="r-label">字号</span>
+        <div class="r-stepper">
+          <button id="fontDown" class="r-step" aria-label="减小字号">A−</button>
+          <span id="fontSizeVal" class="r-val">18px</span>
+          <button id="fontUp" class="r-step" aria-label="增大字号">A+</button>
+        </div>
+      </div>
+
+      <div class="r-row">
+        <span class="r-label">行距</span>
+        <input id="lineHeight" type="range" min="1.2" max="2.4" step="0.05" value="1.8" />
+        <span id="lineHeightVal" class="r-val">1.8</span>
+      </div>
+
+      <div class="r-row">
+        <span class="r-label">段距</span>
+        <input id="paraSpace" type="range" min="0.4" max="2.4" step="0.1" value="1.4" />
+        <span id="paraVal" class="r-val">1.4</span>
+      </div>
+
+      <!-- 翻页方式 / 翻页效果：暂隐藏（当前仅支持滚动模式） -->
+      <div class="r-row col" style="display:none;">
+        <span class="r-label">翻页方式</span>
+        <div id="pageModeChips" class="r-chips">
+          <button class="chip active" data-mode="scroll">滚动</button>
+          <button class="chip" data-mode="page">翻页</button>
+        </div>
+      </div>
+
+      <div class="r-row col" id="pageAnimRow" style="display:none;">
+        <span class="r-label">翻页效果</span>
+        <div id="pageAnimChips" class="r-chips">
+          <button class="chip active" data-anim="fade">淡入</button>
+          <button class="chip" data-anim="slide">横移</button>
+        </div>
+      </div>
+
+      <div class="r-row col">
+        <span class="r-label">字体</span>
+        <div id="fontChips" class="r-chips">
+          <button class="chip active" data-font="system">系统</button>
+          <button class="chip" data-font="hei">黑体</button>
+          <button class="chip" data-font="song">宋体</button>
+          <button class="chip" data-font="kai">楷体</button>
+        </div>
+      </div>
+
+      <div class="r-row">
+        <span class="r-label">加粗</span>
+        <label class="r-switch"><input id="fontBold" type="checkbox" /><span class="r-track"></span></label>
+      </div>
+
+      <div class="r-row">
+        <span class="r-label">自动翻页</span>
+        <label class="r-switch"><input id="autoPage" type="checkbox" /><span class="r-track"></span></label>
+      </div>
+
+      <div class="r-row">
+        <span class="r-label">背景</span>
+        <div class="theme-row">
+          <button class="theme-dot active" data-bg="#f6f3ea" data-color="#33312b" style="background:#f6f3ea" title="纸白"></button>
+          <button class="theme-dot" data-bg="#e9f5ec" data-color="#3a4a3f" style="background:#e9f5ec" title="护眼绿"></button>
+          <button class="theme-dot" data-bg="#efe6d0" data-color="#4a4030" style="background:#efe6d0" title="羊皮纸"></button>
+          <button class="theme-dot" data-bg="#16181d" data-color="#e8e8e8" style="background:#16181d" title="深色"></button>
+        </div>
+      </div>
+
+      <button id="readerResetBtn" class="ghost-btn">重置阅读设置</button>
+    </div>
+  </section>
+
+  <!-- 底部导航 -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button data-view="home" class="active"><span class="nav-ico">🔍</span><span>搜索</span></button>
+    <button data-view="shelf"><span class="nav-ico">📚</span><span>书架</span></button>
+    <button data-view="mine"><span class="nav-ico">👤</span><span>我的</span></button>
+  </nav>
+
+  <script src="group.js"></script>
+  <script src="engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

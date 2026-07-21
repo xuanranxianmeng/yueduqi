@@ -1,0 +1,17 @@
+{
+  "name": "青简阅读",
+  "short_name": "青简",
+  "description": "纯小说阅读器 · 基于 BASe.apk 书源规则",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#1f2430",
+  "theme_color": "#1f2430",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

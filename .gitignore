@@ -1,0 +1,7 @@
+.workbuddy/
+node_modules/
+*.log
+_tests/
+apk_work/
+reading-client/
+nul
